@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "#Architecture: $(uname -a)"
+echo "#CPU physical: $(lscpu | grep 'Socket(s):' | awk '{print $2}')"
+echo "#vCPU: $(nproc)"
+echo "#Memory Usage: $(free -m | grep 'Mem:' | awk '{print $3}')/$(free -m | grep 'Mem:' | awk '{print $2}')MB ($(free -m | grep 'Mem:' | awk '{print $3/$2 *100}')%)"
+echo "#Disk Usage: $(df -h | awk 'FNR==4 {print $3}')/$(df -h | awk 'FNR==4 {print $2}') ($(df -h | awk 'FNR==4 {print $3/$2 *100}')%)"
+#echo "#CPU load: $(mpstat | awk 'NR==4{print 100-$13 "%"}')"
+echo "#Last boot: $(who -b | grep 'system' | awk '{print $3 " " $4}')"
+count=$(lsblk | grep -o lvm | wc -l)
+if [ "$count" -ge 1 ]; then
+    echo "#LVM use: yes"
+else
+    echo "#LVM use: no"
+fi
+echo "#Connections TCP : $(ss | grep -o tcp |wc -l) ESTABLISHED"
+echo "#User log: $(users | wc -w)"
+echo "#Network: IP $(hostname -I) ($(ip a | awk 'FNR==8 {print $2}'))"
+#echo "#Sudo : $(journalctl | grep COMMAND  | wc -l)"
+
